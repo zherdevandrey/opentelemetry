@@ -12,7 +12,8 @@ import org.apache.kafka.clients.producer.ProducerRecord
 import org.apache.kafka.common.header.Headers
 import org.springframework.kafka.core.KafkaTemplate
 import org.springframework.stereotype.Service
-import org.springframework.web.client.RestTemplate
+import org.springframework.web.reactive.function.client.WebClient
+import reactor.core.publisher.Mono
 import java.math.BigDecimal.valueOf
 import java.time.LocalDate
 
@@ -20,19 +21,27 @@ import java.time.LocalDate
 @Service
 class InvoiceService(
     val invoiceRepository: InvoiceRepository,
-    val restTemplate: RestTemplate,
+    val webClient: WebClient,
     val kafkaTemplate: KafkaTemplate<String, String>,
     val tracer: Tracer
 ) {
 
-    fun getInvoice(id: Long): InvoiceDto {
+    fun getInvoice(id: Long): Mono<InvoiceDto> {
         val invoiceEntity = invoiceRepository.findById(id).orElseThrow()
-        val orderDto = restTemplate.getForEntity(
-                "http://localhost:8082/orders/${invoiceEntity.orderId}",
-                OrderDto::class.java
-            ).body ?: throw RuntimeException("Order with id ${invoiceEntity.orderId} was not found")
-
-        return InvoiceDto(invoiceEntity.id!!, invoiceEntity.orderDate!!, invoiceEntity.totalAmount!!, orderDto)
+        return webClient.get().uri("http://localhost:8082/orders/${invoiceEntity.orderId}")
+            .exchangeToMono {
+                it.bodyToMono(OrderDto::class.java)
+                    .map { orderDto ->
+                        InvoiceDto(
+                            invoiceEntity.id!!,
+                            invoiceEntity.orderDate!!,
+                            invoiceEntity.totalAmount!!,
+                            orderDto
+                        )
+                    }
+            }.doOnError {
+                throw RuntimeException("Order with id ${invoiceEntity.orderId} was not found")
+            }
     }
 
     fun createInvoice(id: Long) {

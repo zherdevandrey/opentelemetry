@@ -2,6 +2,8 @@ server:
   port: 8082
 
 otel:
+#  traces:
+#    exporter: console
   exporter:
     otlp:
       protocol: grpc

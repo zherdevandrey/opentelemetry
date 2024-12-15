@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
-    <include resource="org/springframework/boot/logging/logback/console-appender.xml" />
+    <!--    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>-->
+    <!--    <include resource="org/springframework/boot/logging/logback/console-appender.xml" />-->
+
+    <!--    <root level="INFO">-->
+    <!--        <appender-ref ref="CONSOLE"/>-->
+    <!--        <appender-ref ref="OPEN_TELEMETRY"/>-->
+    <!--    </root>-->
 
     <appender name="OPEN_TELEMETRY"
               class="io.opentelemetry.instrumentation.logback.appender.v1_0.OpenTelemetryAppender">
@@ -10,22 +15,14 @@
         <captureMdcAttributes>*</captureMdcAttributes>
     </appender>
 
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] [%logger{36}] [%X{traceId}] [%X{spanId}] %msg%n
+            </pattern>
+        </encoder>
+    </appender>
+
     <root level="INFO">
-        <appender-ref ref="CONSOLE"/>
-        <appender-ref ref="OPEN_TELEMETRY"/>
+        <appender-ref ref="STDOUT"/>
     </root>
 </configuration>
-
-
-<!--<configuration>-->
-<!--<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">-->
-<!--    <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">-->
-<!--        <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] [%logger{36}] %msg%n</pattern>-->
-<!--    </encoder>-->
-<!--</appender>-->
-
-<!--<root level="INFO">-->
-<!--    <appender-ref ref="STDOUT"/>-->
-<!--</root>-->
-
-<!--</configuration>-->
