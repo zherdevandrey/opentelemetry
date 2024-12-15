@@ -1,12 +1,11 @@
 package com.example.order.entity
 
-import jakarta.persistence.Entity
-import jakarta.persistence.Id
-import jakarta.persistence.Table
+
+import org.springframework.data.annotation.Id
+import org.springframework.data.relational.core.mapping.Table
 import java.math.BigDecimal
 import java.time.LocalDate
 
-@Entity
 @Table(name = "INVOICE_TABLE")
 class InvoiceEntity {
     @Id

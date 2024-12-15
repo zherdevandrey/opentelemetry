@@ -1,7 +1,7 @@
 package com.example.order.repository
 
 import com.example.order.entity.InvoiceEntity
-import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.data.repository.kotlin.CoroutineCrudRepository
 
-interface InvoiceRepository : JpaRepository<InvoiceEntity, Long> {
+interface InvoiceRepository : CoroutineCrudRepository<InvoiceEntity, Long> {
 }

@@ -8,12 +8,12 @@ import io.opentelemetry.api.GlobalOpenTelemetry
 import io.opentelemetry.api.trace.Tracer
 import io.opentelemetry.context.Context
 import io.opentelemetry.context.propagation.TextMapSetter
+import kotlinx.coroutines.reactor.awaitSingle
 import org.apache.kafka.clients.producer.ProducerRecord
 import org.apache.kafka.common.header.Headers
 import org.springframework.kafka.core.KafkaTemplate
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
-import reactor.core.publisher.Mono
 import java.math.BigDecimal.valueOf
 import java.time.LocalDate
 
@@ -26,8 +26,8 @@ class InvoiceService(
     val tracer: Tracer
 ) {
 
-    fun getInvoice(id: Long): Mono<InvoiceDto> {
-        val invoiceEntity = invoiceRepository.findById(id).orElseThrow()
+    suspend fun getOrder(id: Long): InvoiceDto {
+        val invoiceEntity = invoiceRepository.findById(id)!!
         return webClient.get().uri("http://localhost:8082/orders/${invoiceEntity.orderId}")
             .exchangeToMono {
                 it.bodyToMono(OrderDto::class.java)
@@ -42,6 +42,7 @@ class InvoiceService(
             }.doOnError {
                 throw RuntimeException("Order with id ${invoiceEntity.orderId} was not found")
             }
+            .awaitSingle()
     }
 
     fun createInvoice(id: Long) {

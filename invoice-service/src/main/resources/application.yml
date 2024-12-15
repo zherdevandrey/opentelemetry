@@ -15,17 +15,19 @@ otel:
       env: dev
 
 spring:
-  datasource:
-    url: jdbc:postgresql://localhost:5432/opentelemetry
+  application:
+    name: invoice-service
+  r2dbc:
+    url: r2dbc:postgresql://localhost:5432/opentelemetry
     username: username
     password: password
-  jpa:
-    hibernate:
-      ddl-auto: create
-    show-sql: true
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
+#  jpa:
+#    hibernate:
+#      ddl-auto: create
+#    show-sql: true
+#    properties:
+#      hibernate:
+#        dialect: org.hibernate.dialect.PostgreSQLDialect
 
   kafka:
     bootstrap-servers: localhost:29092
