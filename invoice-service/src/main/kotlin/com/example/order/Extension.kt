@@ -10,7 +10,11 @@ const val SPAN_ID = "spanId"
 
 suspend fun <T> withMDC(block: suspend () -> T): T {
     return withContext(MDCCoroutineContext(MDC.getCopyOfContextMap())) {
-        block()
+        try {
+            block()
+        }finally {
+            MDC.clear()
+        }
     }
 }
 
