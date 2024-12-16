@@ -30,13 +30,10 @@ suspend fun <T> withMDC(tracer: Tracer, spanName:String, traceId:String, spanId:
         .setParent(Context.current().with(Span.wrap(spanContext)))
         .startSpan()
 
-    MDC.put(TRACE_ID, span.spanContext.traceId)
-    MDC.put(SPAN_ID, span.spanContext.spanId)
     return withContext(MDCCoroutineContext(MDC.getCopyOfContextMap())) {
         try {
             block()
         }finally {
-            MDC.clear()
             span.end()
         }
     }
