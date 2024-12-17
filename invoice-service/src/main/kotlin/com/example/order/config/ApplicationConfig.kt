@@ -20,8 +20,4 @@ class ApplicationConfig {
         return WebClient.builder().build()
     }
 
-    @Bean
-    fun tracer(openTelemetry: OpenTelemetry): Tracer {
-        return openTelemetry.getTracer("kafka-tracing")
-    }
 }

@@ -22,40 +22,41 @@ class OrderScheduler(
 
     private val log = LoggerFactory.getLogger(OrderScheduler::class.java)
 
-    @Scheduled(initialDelay = 0, fixedDelayString = "5000")
-    fun schedule() = runBlocking{
-        println("START SCHEDULE")
-
-        val traceId = "0123456789abcdef0123456789abcdef"
-        val spanId = "abcdef1234567890"
-
-        // Создаём SpanContext с кастомным traceId
-        val spanContext = SpanContext.create(
-            traceId,
-            spanId,
-            TraceFlags.getDefault(),
-            TraceState.getDefault()
-        )
-
-        // Создаём Span с кастомным контекстом
-        val customSpan = tracer.spanBuilder("CustomDatabaseQuery")
-            .setParent(Context.root().with(Span.wrap(spanContext)))
-            .startSpan()
-
-        try {
-            // Устанавливаем Scope с текущим контекстом
-            Scope { customSpan.makeCurrent() }.use {
-                log.info("Executing database query with traceId: {}", customSpan.spanContext.traceId)
-
-                // Вызов базы данных в рамках текущего контекста
-                val order = invoiceService.getOrder(1L)
-                println("ORDER " + order)
-            }
-        } finally {
-            customSpan.end()
-        }
-
-        println("END SCHEDULE")
-    }
+//    @Scheduled(initialDelay = 0, fixedDelayString = "5000")
+//    fun schedule() = runBlocking{
+//        println("START SCHEDULE")
+//
+//        val traceId = "0123456789abcdef0123456789abcdef"
+//        val spanId = "abcdef1234567890"
+//
+//        // Создаём SpanContext с кастомным traceId
+//        val spanContext = SpanContext.create(
+//            traceId,
+//            spanId,
+//            TraceFlags.getDefault(),
+//            TraceState.getDefault()
+//        )
+//
+//        // Создаём Span с кастомным контекстом
+//        val customSpan = tracer.spanBuilder("CustomDatabaseQuery")
+//            .setParent(Context.root().with(Span.wrap(spanContext)))
+//            .startSpan()
+//
+//        try {
+//            // Устанавливаем Scope с текущим контекстом
+//            Scope { customSpan.makeCurrent() }.use {
+//                log.info("Executing database query with traceId: {}", customSpan.spanContext.traceId)
+//
+//                // Вызов базы данных в рамках текущего контекста
+//                val invoice = invoiceRepository.findById(1L)
+////                val order = invoiceService.getOrder(1L)
+//                println("ORDER " + invoice)
+//            }
+//        } finally {
+//            customSpan.end()
+//        }
+//
+//        println("END SCHEDULE")
+//    }
 
 }

@@ -1,36 +1,42 @@
 server:
   port: 8081
 
-otel:
-  traces:
-    exporter: console
-  exporter:
-    otlp:
-      protocol: grpc
-      endpoint: http://localhost:4317
-  resource:
-    attributes:
-      service.name: invoice-service
-      service: invoice-service
-      env: dev
-
 spring:
+
   application:
     name: invoice-service
   r2dbc:
     url: r2dbc:postgresql://localhost:5432/opentelemetry
     username: username
     password: password
-#  jpa:
-#    hibernate:
-#      ddl-auto: create
-#    show-sql: true
-#    properties:
-#      hibernate:
-#        dialect: org.hibernate.dialect.PostgreSQLDialect
 
   kafka:
     bootstrap-servers: localhost:29092
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.apache.kafka.common.serialization.StringSerializer
+
+otel:
+  metrics.exporter: none
+  traces.exporter: none
+  logs.exporter: none
+
+---
+spring:
+  config:
+    activate:
+      on-profile: test,preprod,prod
+
+otel:
+  metrics.exporter: otlp
+  traces.exporter: otlp
+  logs.exporter: otlp
+  exporter:
+    otlp:
+      protocol: grpc
+      endpoint: http://localhost:4319
+  resource:
+    attributes:
+      service.name: invoice-service
+      service: invoice-service
+      env: dev
