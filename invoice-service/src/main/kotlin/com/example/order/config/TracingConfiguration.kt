@@ -3,6 +3,7 @@ package com.example.order.config
 import io.opentelemetry.api.OpenTelemetry
 import io.opentelemetry.api.trace.Span
 import io.opentelemetry.api.trace.Tracer
+import io.opentelemetry.context.Context
 import io.opentelemetry.exporter.otlp.trace.OtlpGrpcSpanExporter
 import io.opentelemetry.sdk.OpenTelemetrySdk
 import io.opentelemetry.sdk.resources.Resource
@@ -51,28 +52,18 @@ class TracingConfiguration {
     fun tracer(openTelemetry: OpenTelemetry): Tracer {
         return openTelemetry.getTracer("kafka-tracing")
     }
-//
+
 //    @Bean
 //    fun tracingFilter(): WebFilter {
 //        return WebFilter { exchange, chain ->
 //            val path = exchange.request.uri.path
+//            val context = Context.root()
 //            if (path == "/actuator/health") {
-//                val span = Span.current()
-//                span.makeCurrent()
-//                span.end()
-//                return@WebFilter chain.filter(exchange)
-//            } else {
-//                val currentSpan: Span = Span.current()
-//                val traceId = currentSpan.spanContext.traceId
-//                val spanId = currentSpan.spanContext.spanId
-//                if (traceId.isNotBlank()) {
-//                    MDC.put("traceId", traceId)
+//                context.makeCurrent().use {
+//                    return@WebFilter chain.filter(exchange)
 //                }
-//                if (spanId.isNotBlank()) {
-//                    MDC.put("spanId", spanId)
-//                }
-//                chain.filter(exchange)
 //            }
+//            return@WebFilter chain.filter(exchange) // Nor
 //        }
 //    }
 }

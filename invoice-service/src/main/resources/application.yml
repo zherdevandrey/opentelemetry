@@ -17,24 +17,12 @@ spring:
       value-serializer: org.apache.kafka.common.serialization.StringSerializer
 
 otel:
-  metrics.exporter: none
-  traces.exporter: none
-  logs.exporter: none
-
----
-spring:
-  config:
-    activate:
-      on-profile: test,preprod,prod
-
-otel:
-  metrics.exporter: otlp
-  traces.exporter: otlp
-  logs.exporter: otlp
+#  traces:
+#    exporter: console
   exporter:
     otlp:
       protocol: grpc
-      endpoint: http://localhost:4319
+      endpoint: http://localhost:4317
   resource:
     attributes:
       service.name: invoice-service
